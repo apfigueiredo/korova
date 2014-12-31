@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Created by Aloysio on 21/12/2014.
  */
+
 public class Profile {
     private String name;
     private Currency defaultCurrency;
@@ -18,23 +19,31 @@ public class Profile {
         currentBook = null;
     }
 
-    public static Profile create(Currency defaultCurrency, String name) {
+    public static Profile create(Currency defaultCurrency, String name, Calendar startDate) {
         Profile p = new Profile();
         p.name = name;
         p.defaultCurrency = defaultCurrency;
 
+        Book b = Book.create(p, startDate);
+        p.currentBook = b;
+        p.books.add(b);
+
         return p;
     }
 
-    public Book createBook(Calendar start, Calendar end) throws KorovaModelException {
-        if (this.currentBook != null) {
-            throw new KorovaModelException("There's already an open book for this profile");
-        }
-        Book b = Book.create(this, start, end);
-        this.currentBook = b;
-        books.add(b);
+    public void closeCurrentBook(){
+        Book newBook = currentBook.close();
+        currentBook = newBook;
+        books.add(newBook);
+        books.add(newBook);
+    }
 
-        return b;
+    public Book getCurrentBook() {
+        return currentBook;
+    }
+
+    public List<Book> getBooks() {
+        return books;
     }
 
 }
